@@ -1,0 +1,19 @@
+name: JSAN-Index-Data
+version: 0.01_01
+abstract: A Data::Package for the SQLite JSAN Index
+author: Adam Kennedy <cpan@ali.as>
+license: perl
+distribution_type: module
+build_requires:
+  Test::More: 0.47
+requires:
+  perl: 5.005
+  File::Spec: 0.80
+  File::HomeDir: 0.05
+  Data::Package: 0.05
+  DBI: 1.43
+  DBD::SQLite: 1.00
+no_index:
+  directory:
+    - inc
+generated_by: Module::Install version 0.36

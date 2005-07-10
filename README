@@ -1,0 +1,64 @@
+NAME
+    JSAN::Index::Data - A Data::Package for the SQLite JSAN Index
+
+SYNOPSIS
+      # Load the data package
+      use JSAN::Indexer:Data;
+  
+      # Request the data it manages
+      my $dbh = JSAN::Indexer::Data->get('DBI::db');
+
+DESCRIPTION
+    This is the distribution and package for the JSAN index.
+
+    JSAN is the JavaScript Archive Network and can be located at
+    <http://openjsan.org/>.
+
+    "JSAN::Indexer::Data" is a Data::Package, a package with the sole
+    purpose of integrating a "data product" into the CPAN namespace,
+    abstracting away and encapsulating the implementation complexity so that
+    all you need to do is request a the data from the class.
+
+    It is versioned and installed separately from the things that will
+    consume the data it provides. In this case JSAN::Index.
+
+STATUS
+    This distribution currently specificies the correct installation
+    dependencies, and implements the correct code. However, I'm unsure how
+    to actually control the installation location for the JSAN index.
+
+    Advice is sought on upgrading the Makefile.PL or this class to get it
+    downloaded and installed in a reliable place, and to update the download
+    as needed.
+
+METHODS
+    This class implements the Data::Package API, and provides data in the
+    form of a DBI::db object (a database connection).
+
+    See the \SYNOPSIS above for the standard use.
+
+TO DO
+    - Check this actually works with the real database
+
+    - Work out how to install to the correct place
+
+    - Implement the Data::Package::Upgrade API once it exists
+
+SUPPORT
+    Bugs should be reported via the CPAN bug tracker at
+
+    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=JSAN-Index-Data>
+
+    For other issues, contact the author.
+
+AUTHOR
+    Adam Kennedy <cpan@ali.as>, <http://ali.as/>
+
+COPYRIGHT
+    Copyright 2005 Adam Kennedy. All rights reserved. This program is free
+    software; you can redistribute it and/or modify it under the same terms
+    as Perl itself.
+
+    The full text of the license can be found in the LICENSE file included
+    with this module.
+
