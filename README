@@ -20,16 +20,35 @@ DESCRIPTION
     all you need to do is request a the data from the class.
 
     It is versioned and installed separately from the things that will
-    consume the data it provides. In this case JSAN::Index.
+    consume the data it provides. In this case JSAN::Index and a range of
+    other JSAN-related packages.
 
 STATUS
     This distribution currently specificies the correct installation
-    dependencies, and implements the correct code. However, I'm unsure how
-    to actually control the installation location for the JSAN index.
+    dependencies, and implements the correct code.
 
-    Advice is sought on upgrading the Makefile.PL or this class to get it
-    downloaded and installed in a reliable place, and to update the download
-    as needed.
+    It attempts to use the JSAN root path from the "JSAN_PREFIX" environment
+    variable. If that does not exist, it will further guess that the current
+    user has a ~/.jsan directory.
+
+    Additional advice is sought on upgrading the Makefile.PL or this class
+    to get it downloaded and installed in a reliable place, and to update
+    the download as needed.
+
+INSTALLING
+    In order to install this, you are going to need to have an existing JSAN
+    index database. At time of writing, with JSAN at version 0.02, this
+    installs to $HOME/.jsan.index.sqlite
+
+    You may need to run the following before attempting to install this
+    package.
+
+      cd ~
+      mkdir .jsan
+      cp .jsan.sqlite.index .jsan/index.sqlite
+
+    Hopefuly this will be resolved soon, and everything will play together
+    nicely. Give it time, JSAN is still young.
 
 METHODS
     This class implements the Data::Package API, and provides data in the
@@ -37,12 +56,21 @@ METHODS
 
     See the \SYNOPSIS above for the standard use.
 
+  dsn
+    The "dsn" method provides direct access to the index database DSN
+
+  file
+    The "file" method returns the file path for the SQLite index database
+
+  root
+    The "root" method returns the JSAN root directory being used
+
 TO DO
     - Check this actually works with the real database
 
     - Work out how to install to the correct place
 
-    - Implement the Data::Package::Upgrade API once it exists
+    - Implement the Data::Package::Update API once it exists
 
 SUPPORT
     Bugs should be reported via the CPAN bug tracker at

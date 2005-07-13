@@ -27,17 +27,37 @@ abstracting away and encapsulating the implementation complexity so
 that all you need to do is request a the data from the class.
 
 It is versioned and installed separately from the things that will
-consume the data it provides. In this case L<JSAN::Index>.
+consume the data it provides. In this case L<JSAN::Index> and a range
+of other JSAN-related packages.
 
 =head1 STATUS
 
 This distribution currently specificies the correct installation
-dependencies, and implements the correct code. However, I'm unsure
-how to actually control the installation location for the JSAN index.
+dependencies, and implements the correct code.
 
-Advice is sought on upgrading the Makefile.PL or this class to get
-it downloaded and installed in a reliable place, and to update the
-download as needed.
+It attempts to use the JSAN root path from the C<JSAN_PREFIX>
+environment variable. If that does not exist, it will further guess that
+the current user has a ~/.jsan directory.
+
+Additional advice is sought on upgrading the Makefile.PL or this class
+to get it downloaded and installed in a reliable place, and to update
+the download as needed.
+
+=head1 INSTALLING
+
+In order to install this, you are going to need to have an existing
+L<JSAN> index database. At time of writing, with JSAN at version 0.02,
+this installs to $HOME/.jsan.index.sqlite
+
+You may need to run the following before attempting to install this
+package.
+
+  cd ~
+  mkdir .jsan
+  cp .jsan.sqlite.index .jsan/index.sqlite
+
+Hopefuly this will be resolved soon, and everything will play together
+nicely. Give it time, JSAN is still young.
 
 =head1 METHODS
 
@@ -49,34 +69,86 @@ See the L<\SYNOPSIS> above for the standard use.
 =cut
 
 use strict;
+use Carp          ();
 use File::Spec    ();
 use File::HomeDir ();
 use DBI;
 use base 'Data::Package';
 
-use vars qw{$VERSION $DSN};
+use vars qw{$VERSION};
 BEGIN {
-	$VERSION = '0.01_01';
-	$DSN     = '';
+	$VERSION = '0.02';
 }
 
-# Assume a default location until someone tells us better.
-my $FILE = File::Spec->catfile( File::HomeDir::home(), '.jsan', 'index.db' );
-$DSN = "dbi:SQLite:$FILE" if -f $FILE;
+my @PATHS = File::Spec->catfile( File::HomeDir::home(), '.jsan' );
+if ( $ENV{JSAN_PREFIX} ) {
+	unshift @PATHS, $ENV{JSAN_PREFIX};
+}
 
-# Provide and get implemented using the coerce mechanism
-sub __as_DBI_db {
-	my $either = shift;
-	return undef unless $DSN;
-
-	# Connect to the database
-	my $dbh = DBI->connect( $DSN, '', '' );
-
-	# Handle DBI connect errors (just return undef for now)
-	unless ( $dbh ) {
-		return undef;
+# Try to locate the index
+my $ROOT = '';
+my $FILE = '';
+my $DSN  = '';
+foreach my $path ( @PATHS ) {
+	next unless -d $path;
+	my $file = File::Spec->catfile( $path, 'index.sqlite' );
+	unless ( -f $file ) {
+		Carp::croak("Could not locate index.sqlite file inside JSAN path $path");
 	}
+	unless ( -r $file ) {
+		Carp::croak("Do not have read permissions for JSAN index $file");
+	}
+	$ROOT = $path;
+	$FILE = $file;
+	$DSN  = "dbi:SQLite:dbname=$file";
+}
+unless ( $DSN ) {
+	my $paths = join ', ', @PATHS;
+	Carp::croak("Could not locate a JSAN path (tried $paths)");
+}
 
+=pod
+
+=head2 dsn
+
+The C<dsn> method provides direct access to the index database DSN
+
+=cut
+
+sub dsn { $DSN }
+
+=pod
+
+=head2 file
+
+The C<file> method returns the file path for the SQLite index database
+
+=cut
+
+sub file { $FILE }
+
+=pod
+
+=head2 root
+
+The C<root> method returns the JSAN root directory being used
+
+=cut
+
+sub root { $ROOT }
+
+
+
+
+
+#####################################################################
+# Param::Coerce Support
+
+sub __as_DBI_db {
+	my $dbh = DBI->connect( $DSN, '', '' );
+	unless ( $dbh ) {
+		Carp::croak("Database error connecting to JSAN index $DSN");
+	}
 	$dbh;
 }
 
@@ -90,7 +162,7 @@ sub __as_DBI_db {
 
 - Work out how to install to the correct place
 
-- Implement the Data::Package::Upgrade API once it exists
+- Implement the Data::Package::Update API once it exists
 
 =head1 SUPPORT
 

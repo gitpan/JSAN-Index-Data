@@ -16,7 +16,15 @@ BEGIN {
 }
 
 use JSAN::Index::Data;
-use Test::More tests => 4;
+use Test::More tests => 10;
+
+# Check the basic methods
+ok( JSAN::Index::Data->root, "->root returns a value" );
+ok( -d JSAN::Index::Data->root, "->root returns a dir that exists" );
+ok( JSAN::Index::Data->file, "->file returns a value" );
+ok( -f JSAN::Index::Data->file, "->file returns a file that exists" );
+ok( -r JSAN::Index::Data->file, "->file returns a file we can read" );
+ok( JSAN::Index::Data->dsn, "->dsn returns a value" );
 
 # Does it provide anything
 my @provides = JSAN::Index::Data->provides;
@@ -26,10 +34,7 @@ ok( scalar(@provides), 'JSAN::Index::Data provides a DBI::db object' );
 
 # Does it actually return the connection?
 my $dbh = JSAN::Index::Data->get('DBI::db');
-TODO: {
-	local $TODO = "Don't know how to get the file installed";
-	ok( $dbh, "JSAN::Index::Data->get('DBI::db') returns something" );
-	isa_ok( $dbh, 'DBI::db' );
-}
+ok( $dbh, "JSAN::Index::Data->get('DBI::db') returns something" );
+isa_ok( $dbh, 'DBI::db' );
 
 exit(0);

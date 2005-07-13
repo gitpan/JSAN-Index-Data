@@ -1,5 +1,5 @@
 name: JSAN-Index-Data
-version: 0.01_01
+version: 0.02
 abstract: A Data::Package for the SQLite JSAN Index
 author: Adam Kennedy <cpan@ali.as>
 license: perl

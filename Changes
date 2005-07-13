@@ -1,4 +1,7 @@
 Revision history for Perl extension JSAN::Index::Data
 
+0.02 Wed Jul 13 2005
+	- First working version, needs some hacking to get it working
+
 0.01_01 Sun Jul 10 2005
 	- Completed the first implementation
